@@ -13,8 +13,6 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
-    private Sensor defaultSensor;
-    private SensorManager sensorManager;
     private Date lastDate;
     private final static long WARTEZEIT_IN_MILLISEKUNDEN = 1000L;
 
@@ -23,9 +21,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         lastDate = new Date();
         setContentView(R.layout.activity_main);
-
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        defaultSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
     }
 
     public void klick(View v) {
@@ -35,13 +30,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, defaultSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(this);
     }
 
     @Override
