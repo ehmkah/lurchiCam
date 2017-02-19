@@ -6,6 +6,7 @@ import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -13,13 +14,16 @@ import android.util.Log;
 import android.view.View;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private final static long WARTEZEIT_IN_MILLISEKUNDEN = 1000L;
+    private final static String TAG = "LURCHI_CAM";
 
     private boolean hasCamera;
     private Camera mCamera;
@@ -57,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         }
     };
+    private MediaRecorder mediaRecorder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +86,36 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         System.out.println("HUHU");
         mCamera.startPreview();
         mCamera.takePicture(null, null, mPictureCallback);
+    }
+
+    public void stopRecord(View v) {
+        if (mediaRecorder != null) {
+            mediaRecorder.stop();
+            mediaRecorder = null;
+        }
+    }
+
+    public void startRecord(View v) {
+        System.out.println("AUFNAHME");
+        if (mediaRecorder == null) {
+            try {
+
+                mediaRecorder = new MediaRecorder();
+                mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                String mediaFile = getExternalCacheDir().getAbsolutePath() + "/audiorecordtest.3gp";
+                mediaRecorder.setOutputFile(mediaFile);
+                mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                mediaRecorder.prepare();
+                mediaRecorder.start();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            int maxAmplitude = mediaRecorder.getMaxAmplitude();
+            Log.d(TAG, "max aplitude" + maxAmplitude);
+        }
     }
 
     public static Camera getCameraInstance() {
