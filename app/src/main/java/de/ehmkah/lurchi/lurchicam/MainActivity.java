@@ -23,12 +23,14 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private final static long WARTEZEIT_IN_MILLISEKUNDEN = 1000L;
+    private final static long AMPLITUDE_TRIGGER = 30000;
     private final static String TAG = "LURCHI_CAM";
 
     private boolean hasCamera;
     private Camera mCamera;
 
     private Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
+
 
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
@@ -84,6 +86,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public void klick(View v) {
         System.out.println("HUHU");
+        takePhoto();
+    }
+
+    private void takePhoto() {
         mCamera.startPreview();
         mCamera.takePicture(null, null, mPictureCallback);
     }
@@ -115,6 +121,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         } else {
             int maxAmplitude = mediaRecorder.getMaxAmplitude();
             Log.d(TAG, "max aplitude" + maxAmplitude);
+            if (maxAmplitude > AMPLITUDE_TRIGGER) {
+                takePhoto();
+            }
         }
     }
 
