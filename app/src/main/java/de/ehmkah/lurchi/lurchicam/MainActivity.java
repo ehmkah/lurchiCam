@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private final static long WARTEZEIT_IN_MILLISEKUNDEN = 1000L;
     private final static long AMPLITUDE_TRIGGER = 30000;
     private final static String TAG = "LURCHI_CAM";
-    private static final long PULL_INTERVALL = 1 * 1000;
+    private static final long PULL_INTERVALL = 10 * 1000;
 
     private Camera mCamera;
 
