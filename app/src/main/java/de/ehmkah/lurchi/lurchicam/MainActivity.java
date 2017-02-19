@@ -14,19 +14,20 @@ import android.util.Log;
 import android.view.View;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private final static long WARTEZEIT_IN_MILLISEKUNDEN = 1000L;
     private final static long AMPLITUDE_TRIGGER = 30000;
     private final static String TAG = "LURCHI_CAM";
+    private static final long PULL_INTERVALL = 1 * 1000;
 
-    private boolean hasCamera;
     private Camera mCamera;
 
     private Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
@@ -69,19 +70,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        hasCamera = checkCameraHardware(getApplicationContext());
-        if (hasCamera) {
-            mCamera = getCameraInstance();
-        }
+
+        scheduleTimer();
 
     }
 
-    private boolean checkCameraHardware(Context context) {
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            return true;
-        }
+    private void scheduleTimer() {
+        Timer timer = new Timer();
+        TimerTask hourlyTask = new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("timer called" + new Date());
+                takePhotoIfSignalCame();
+            }
+        };
 
-        return false;
+        timer.schedule(hourlyTask, 0l, PULL_INTERVALL);   // 1000*10*60 every 10 minut
     }
 
     public void klick(View v) {
@@ -99,13 +103,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mediaRecorder.stop();
             mediaRecorder = null;
         }
+        if (mCamera != null) {
+            mCamera.release();
+            mCamera = null;
+        }
     }
 
     public void startRecord(View v) {
         System.out.println("AUFNAHME");
+        if (mCamera == null) {
+            mCamera = getCameraInstance();
+        }
         if (mediaRecorder == null) {
             try {
-
                 mediaRecorder = new MediaRecorder();
                 mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                 String mediaFile = getExternalCacheDir().getAbsolutePath() + "/audiorecordtest.3gp";
@@ -115,10 +125,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 mediaRecorder.prepare();
                 mediaRecorder.start();
 
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
+            takePhotoIfSignalCame();
+        }
+    }
+
+    private void takePhotoIfSignalCame() {
+        if (mediaRecorder != null && mCamera != null) {
             int maxAmplitude = mediaRecorder.getMaxAmplitude();
             Log.d(TAG, "max aplitude" + maxAmplitude);
             if (maxAmplitude > AMPLITUDE_TRIGGER) {
@@ -141,18 +159,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
-        if (mCamera == null) {
-            mCamera = getCameraInstance();
-        }
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mCamera.release();
-        mCamera = null;
-
     }
 
     @Override
