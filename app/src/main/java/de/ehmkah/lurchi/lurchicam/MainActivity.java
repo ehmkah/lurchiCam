@@ -17,15 +17,12 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
-
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private final static long WARTEZEIT_IN_MILLISEKUNDEN = 1000L;
 
     private boolean hasCamera;
     private Camera mCamera;
-    private CameraPreview mCameraPreview;
 
     private Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
 
@@ -68,9 +65,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         hasCamera = checkCameraHardware(getApplicationContext());
         if (hasCamera) {
             mCamera = getCameraInstance();
-            // mCameraPreview = new CameraPreview(this, mCamera);
-            // FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-            //  preview.addView(mCameraPreview);
         }
 
     }
