@@ -23,7 +23,6 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
-    private final static long WARTEZEIT_IN_MILLISEKUNDEN = 1000L;
     private final static long AMPLITUDE_TRIGGER = 30000;
     private final static String TAG = "LURCHI_CAM";
     private static final long PULL_INTERVALL = 10 * 1000;
@@ -31,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Camera mCamera;
 
     private Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
-
 
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
@@ -48,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             } catch (java.io.IOException e) {
                 e.printStackTrace();
             }
+
+            mCamera.stopPreview();
         }
 
         private File getOutputMediaFile() {
@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         }
     };
+
+
     private MediaRecorder mediaRecorder;
 
     @Override
@@ -95,7 +97,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void takePhoto() {
         mCamera.startPreview();
+        Camera.Parameters p = mCamera.getParameters();
+        p.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+        mCamera.setParameters(p);
         mCamera.takePicture(null, null, mPictureCallback);
+
     }
 
     public void stopRecord(View v) {
