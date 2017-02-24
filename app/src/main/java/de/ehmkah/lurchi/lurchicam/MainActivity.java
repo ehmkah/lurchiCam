@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -113,10 +114,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mCamera.release();
             mCamera = null;
         }
+
+        Button btnTest = (Button) findViewById(R.id.btnTestphoto);
+        btnTest.setEnabled(true);
     }
 
     public void startRecord(View v) {
         System.out.println("AUFNAHME");
+
+        Button btnTest = (Button) findViewById(R.id.btnTestphoto);
+        btnTest.setEnabled(false);
+
         if (mCamera == null) {
             mCamera = getCameraInstance();
         }
