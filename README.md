@@ -1,7 +1,7 @@
 # lurchiCam
 watching firesalamanders using a smartphone Galaxy S III Mini, Android 4.1.2
 
-The aim is to shoot pictures with the smartphone initialiated by a noise input over the mic.
+The aim is to shoot pictures with the smartphone initiated by a noise input over the mic.
 
 Proof of concept (POC):
 Each ten zehn seconds, the smartphone listens to a noise above a threshold. In case a noise is recognized, a picture will be taken. The pictures can be found here: /Pictures/LurchiCam
